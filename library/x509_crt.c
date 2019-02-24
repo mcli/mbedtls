@@ -1324,11 +1324,17 @@ int mbedtls_x509_crt_parse_path( mbedtls_x509_crt *chain, const char *path )
             goto cleanup;
         }
 
-        w_ret = mbedtls_x509_crt_parse_file( chain, filename );
-        if( w_ret < 0 )
-            ret++;
-        else
-            ret += w_ret;
+        //
+        // ignore files we know we won't recognize
+        //
+        if (strstr(".trust.crt", filename) == NULL)
+        {
+            w_ret = mbedtls_x509_crt_parse_file( chain, filename );
+            if( w_ret < 0 )
+                ret++;
+            else
+              ret += w_ret;
+        }
     }
     while( FindNextFileW( hFind, &file_data ) != 0 );
 
